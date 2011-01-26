@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<targets>
+
+  <rrlib name="model_fitting">
+    <sources>
+      definitions.h
+      functions.h
+      tAverage.h
+      tDataFusion.h
+      tMaximumKey.h
+      tMedianVoter.h
+      tWeightedAverage.h
+    </sources>
+  </rrlib>
+
+  <testprogram name="program">
+    <sources>
+      test/test_program.cpp
+    </sources>
+  </testprogram>
+
+</targets>
