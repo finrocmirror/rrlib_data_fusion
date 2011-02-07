@@ -40,6 +40,7 @@
 // Internal includes with ""
 //----------------------------------------------------------------------
 #include "rrlib/data_fusion/functions.h"
+#include "rrlib/data_fusion/factory.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -134,6 +135,11 @@ int main(int argc, char **argv)
     std::cout << "The median by keys of [ " << Join(data.begin(), data.end()) << " ] with keys [ " << Join(keys, keys + number_of_samples) << " ] is " << result << std::endl;
     assert(IsEqual(result, tPose2D(0.2, 0.2, 0.2)) || IsEqual(result, tPose2D(0.5, 0.5, 0.5)));
   }
+
+  rrlib::data_fusion::InitializeFactory<tPose2D>();
+
+  tDataFusion<tPose2D> *fusion = rrlib::data_fusion::tDataFusionFactory<tPose2D>::GetInstance().Create("Average");
+  delete fusion;
 
   std::cout << "OK" << std::endl;
 

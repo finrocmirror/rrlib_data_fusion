@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_data_fusion_tDataFusion_h_
-#define _rrlib_data_fusion_tDataFusion_h_
+#ifndef __rrlib__data_fusion__tDataFusion_h__
+#define __rrlib__data_fusion__tDataFusion_h__
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")

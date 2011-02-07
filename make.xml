@@ -4,12 +4,19 @@
   <rrlib name="model_fitting">
     <sources>
       definitions.h
+      factory.h
       functions.h
       tAverage.h
       tDataFusion.h
       tMaximumKey.h
       tMedianVoter.h
       tWeightedAverage.h
+    </sources>
+  </rrlib>
+
+  <rrlib name="model_fitting_factory">
+    <sources>
+      factory.h
     </sources>
   </rrlib>
 

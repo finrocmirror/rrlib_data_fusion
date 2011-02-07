@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_data_fusion_definitions_h_
-#define _rrlib_data_fusion_definitions_h_
+#ifndef __rrlib__data_fusion__definitions_h__
+#define __rrlib__data_fusion__definitions_h__
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
@@ -54,6 +54,8 @@ namespace data_fusion
 {
 
 RRLIB_LOG_CREATE_DEFAULT_DOMAIN("data_fusion");
+
+
 
 //----------------------------------------------------------------------
 // End of namespace declaration

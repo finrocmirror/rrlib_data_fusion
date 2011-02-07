@@ -31,8 +31,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_data_fusion_functions_h_
-#define _rrlib_data_fusion_functions_h_
+#ifndef __rrlib__data_fusion__functions_h__
+#define __rrlib__data_fusion__functions_h__
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")

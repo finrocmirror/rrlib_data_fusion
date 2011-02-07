@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_data_fusion_tMaximumKey_h_
-#define _rrlib_data_fusion_tMaximumKey_h_
+#ifndef __rrlib__data_fusion__tMaximumKey_h__
+#define __rrlib__data_fusion__tMaximumKey_h__
 
 #include "rrlib/data_fusion/tDataFusion.h"
 
