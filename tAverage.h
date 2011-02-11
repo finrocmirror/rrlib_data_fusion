@@ -183,7 +183,7 @@ private:
   virtual const tBase::tSample GetFusedValueImplementation() const
   {
     double factor = 1.0 / this->NumberOfSamples();
-    return tBase::tSample(this->AccumulatedSamples().GetPosition() * factor, this->raw_yaw_value * factor);
+    return tBase::tSample(this->AccumulatedSamples().Position() * factor, this->raw_yaw_value * factor);
   }
 
 };
@@ -233,7 +233,7 @@ private:
   virtual const tBase::tSample GetFusedValueImplementation() const
   {
     double factor = 1.0 / this->NumberOfSamples();
-    return tBase::tSample(this->AccumulatedSamples().GetPosition() * factor, this->raw_roll_value * factor, this->raw_pitch_value * factor, this->raw_yaw_value * factor);
+    return tBase::tSample(this->AccumulatedSamples().Position() * factor, this->raw_roll_value * factor, this->raw_pitch_value * factor, this->raw_yaw_value * factor);
   }
 
 };

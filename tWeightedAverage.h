@@ -202,7 +202,7 @@ private:
 
   virtual const bool AddSampleImplementation(const tBase::tSample &sample, double key)
   {
-    this->AccumulatedSamples().SetPosition(this->AccumulatedSamples().GetPosition() + sample.GetPosition() * key);
+    this->AccumulatedSamples().SetPosition(this->AccumulatedSamples().Position() + sample.Position() * key);
     this->raw_yaw_value += sample.Yaw() * key;
     this->AccumulatedWeights() += key;
     return true;
@@ -211,7 +211,7 @@ private:
   virtual const tBase::tSample GetFusedValueImplementation() const
   {
     double factor = 1.0 / this->AccumulatedWeights();
-    return tBase::tSample(this->AccumulatedSamples().GetPosition() * factor, this->raw_yaw_value * factor);
+    return tBase::tSample(this->AccumulatedSamples().Position() * factor, this->raw_yaw_value * factor);
   }
 
 };
@@ -251,7 +251,7 @@ private:
 
   virtual const bool AddSampleImplementation(const tBase::tSample &sample, double key)
   {
-    this->AccumulatedSamples().SetPosition(this->AccumulatedSamples().GetPosition() + sample.GetPosition() * key);
+    this->AccumulatedSamples().SetPosition(this->AccumulatedSamples().Position() + sample.Position() * key);
     this->raw_roll_value += sample.Roll() * key;
     this->raw_pitch_value += sample.Pitch() * key;
     this->raw_yaw_value += sample.Yaw() * key;
@@ -262,7 +262,7 @@ private:
   virtual const tBase::tSample GetFusedValueImplementation() const
   {
     double factor = 1.0 / this->AccumulatedWeights();
-    return tBase::tSample(this->AccumulatedSamples().GetPosition() * factor, this->raw_roll_value * factor, this->raw_pitch_value * factor, this->raw_yaw_value * factor);
+    return tBase::tSample(this->AccumulatedSamples().Position() * factor, this->raw_roll_value * factor, this->raw_pitch_value * factor, this->raw_yaw_value * factor);
   }
 
 };
