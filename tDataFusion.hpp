@@ -63,68 +63,130 @@ namespace data_fusion
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
-// tDataFusion constructors
+// tDataFusion destructor
 //----------------------------------------------------------------------
-template <typename TSample>
-tDataFusion<TSample>::tDataFusion()
-    : number_of_samples(0)
+template <
+typename TSample,
+template <typename> class TChannel
+>
+tDataFusion<TSample, TChannel>::~tDataFusion()
 {}
 
 //----------------------------------------------------------------------
-// tDataFusion destructor
+// tDataFusion SetNumberOfChannels
 //----------------------------------------------------------------------
-template <typename TSample>
-tDataFusion<TSample>::~tDataFusion()
-{}
+template <typename TSample, template <typename> class TChannel>
+void tDataFusion<TSample, TChannel>::SetNumberOfChannels(size_t number_of_channels)
+{
+  this->channels.resize(number_of_channels);
+  this->data_changed = true;
+}
+
+//----------------------------------------------------------------------
+// tDataFusion UpdateChannel
+//----------------------------------------------------------------------
+template <typename TSample, template <typename> class TChannel>
+void tDataFusion<TSample, TChannel>::UpdateChannel(unsigned int channel, const tSample &sample, double key)
+{
+  if (channel >= this->channels.size())
+  {
+    std::stringstream stream;
+    stream << "Channel " << channel << " does not exist in fusion object with " << this->channels.size() << " channel" << (this->channels.size() == 1 ? "" : "s") << "!";
+    throw std::runtime_error(stream.str());
+  }
+  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_2, "Updating channel ", channel, " with sample ", sample, " and key ", key);
+  this->channels[channel].AddSample(sample, key);
+  this->data_changed = true;
+}
+
+//----------------------------------------------------------------------
+// tDataFusion UpdateAllChannels
+//----------------------------------------------------------------------
+template <typename TSample, template <typename> class TChannel>
+template <typename TSampleIterator>
+void tDataFusion<TSample, TChannel>::UpdateAllChannels(TSampleIterator begin_samples, TSampleIterator end_samples)
+{
+  size_t channel = 0;
+  TSampleIterator sample = begin_samples;
+  while (sample != end_samples)
+  {
+    this->UpdateChannel(channel++, *(sample++));
+  }
+}
+
+template <typename TSample, template <typename> class TChannel>
+template <typename TSampleIterator, typename TKeyIterator>
+void tDataFusion<TSample, TChannel>::UpdateAllChannels(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys)
+{
+  size_t channel = 0;
+  TSampleIterator sample = begin_samples;
+  TKeyIterator key = begin_keys;
+  while (sample != end_samples && key != end_keys)
+  {
+    this->UpdateChannel(channel++, *(sample++), *(key++));
+  }
+
+  if (sample != end_samples || key != end_keys)
+  {
+    throw std::runtime_error("Number of samples did not match number of keys!");
+  }
+}
+
+//----------------------------------------------------------------------
+// tDataFusion IsValid
+//----------------------------------------------------------------------
+template <typename TSample, template <typename> class TChannel>
+const bool tDataFusion<TSample, TChannel>::IsValid() const
+{
+  for (typename std::vector<TChannel<TSample>>::const_iterator it = this->channels.begin(); it != this->channels.end(); ++it)
+  {
+    if (!it->IsValid())
+    {
+      return false;
+    }
+  }
+  return this->channels.size() > 0 && this->HasValidState();
+}
+
+//----------------------------------------------------------------------
+// tDataFusion ClearChannels
+//----------------------------------------------------------------------
+template <typename TSample, template <typename> class TChannel>
+void tDataFusion<TSample, TChannel>::ClearChannels()
+{
+  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Clearing channels.");
+  for (typename std::vector<TChannel<TSample>>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
+  {
+    it->Clear();
+  }
+}
 
 //----------------------------------------------------------------------
 // tDataFusion ResetState
 //----------------------------------------------------------------------
-template <typename TSample>
-void tDataFusion<TSample>::ResetState()
+template <typename TSample, template <typename> class TChannel>
+void tDataFusion<TSample, TChannel>::ResetState()
 {
   RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Resetting state.");
-  this->ClearSamples();
+  this->ClearChannels();
   this->ResetStateImplementation();
 }
 
 //----------------------------------------------------------------------
-// tDataFusion ClearSamples
+// tDataFusion EnterNextTimestep()
 //----------------------------------------------------------------------
-template <typename TSample>
-void tDataFusion<TSample>::ClearSamples()
+template <typename TSample, template <typename> class TChannel>
+void tDataFusion<TSample, TChannel>::EnterNextTimestep()
 {
-  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Clearing samples.");
-  this->number_of_samples = 0;
-  this->ClearSamplesImplementation();
+  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Clearing channels.");
+  for (typename std::vector<TChannel<TSample>>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
+  {
+    it->PrepareForNextTimestep();
+  }
+  this->EnterNextTimestepImplementation();
 }
 
-//----------------------------------------------------------------------
-// tDataFusion AddSample
-//----------------------------------------------------------------------
-template <typename TSample>
-void tDataFusion<TSample>::AddSample(const tSample &sample, double key)
-{
-  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_2, "Adding sample ", sample, " with key ", key);
-  if (this->AddSampleImplementation(sample, key))
-  {
-    this->number_of_samples++;
-  }
-}
 
-//----------------------------------------------------------------------
-// tDataFusion GetFusedValue
-//----------------------------------------------------------------------
-template <typename TSample>
-const TSample tDataFusion<TSample>::GetFusedValue() const
-{
-  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Calculating result from ", this->number_of_samples, " samples.");
-  if (this->number_of_samples == 0)
-  {
-    throw std::logic_error("Trying to calculate a fused value without providing sample data before!");
-  }
-  return this->GetFusedValueImplementation();
-}
 
 //----------------------------------------------------------------------
 // End of namespace declaration

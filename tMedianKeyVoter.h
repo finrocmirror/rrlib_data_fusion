@@ -70,8 +70,11 @@ namespace data_fusion
 /*! A more detailed description of tMedianKeyVoter, which
  *  Tobias Foehst hasn't done yet !!
  */
-template <typename TSample>
-class tMedianKeyVoter : public tDataFusion<TSample>
+template <
+typename TSample,
+template <typename> class TChannel = channel::LastValue
+>
+class tMedianKeyVoter : public tDataFusion<TSample, TChannel>
 {
 
 //----------------------------------------------------------------------
@@ -79,24 +82,13 @@ class tMedianKeyVoter : public tDataFusion<TSample>
 //----------------------------------------------------------------------
 private:
 
-  mutable std::list<std::pair<TSample, double>> samples;
-
   virtual const char *GetLogDescription() const
   {
     return "tMedianKeyVoter";
   }
 
-  virtual const void ResetStateImplementation()
-  {}
-
-  virtual const void ClearSamplesImplementation()
+  virtual const bool HasValidState() const
   {
-    this->samples.clear();
-  }
-
-  virtual const bool AddSampleImplementation(const TSample &sample, double key)
-  {
-    this->samples.push_back(std::make_pair(sample, key));
     return true;
   }
 
@@ -105,13 +97,24 @@ private:
     return a.second < b.second;
   }
 
-  virtual const TSample GetFusedValueImplementation() const
+  virtual const TSample CalculateFusedValue(const std::vector<TChannel<TSample>> &channels)
   {
-    this->samples.sort(CompareSamples);
-    typename std::list<std::pair<TSample, double>>::iterator it = this->samples.begin();
-    std::advance(it, std::trunc(this->NumberOfSamples() / 2.0));
+    std::list<std::pair<TSample, double>> samples;
+    for (typename std::vector<TChannel<TSample>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+      samples.push_back(std::make_pair(it->GetSample(), it->GetKey()));
+    }
+    samples.sort(CompareSamples);
+    typename std::list<std::pair<TSample, double>>::iterator it = samples.begin();
+    std::advance(it, std::trunc(samples.size() / 2.0));
     return it->first;
   }
+
+  virtual void ResetStateImplementation()
+  {}
+
+  virtual void EnterNextTimestepImplementation()
+  {}
 
 };
 

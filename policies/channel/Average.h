@@ -19,33 +19,33 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //----------------------------------------------------------------------
-/*!\file    tDataFusion.h
+/*!\file    Average.h
  *
  * \author  Tobias Foehst
  *
- * \date    2011-01-25
+ * \date    2011-02-14
  *
- * \brief   Contains tDataFusion
+ * \brief   Contains Average
  *
- * \b tDataFusion
+ * \b Average
  *
- * A few words for tDataFusion
+ * A few words for Average
  *
  */
 //----------------------------------------------------------------------
-#ifndef __rrlib__data_fusion__tDataFusion_h__
-#define __rrlib__data_fusion__tDataFusion_h__
+#ifndef __rrlib__data_fusion__policies__channel__Average_h__
+#define __rrlib__data_fusion__policies__channel__Average_h__
+
+#include "rrlib/data_fusion/policies/channel/Base.h"
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
-#include <stdexcept>
-#include <vector>
 
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
-#include "rrlib/data_fusion/policies/channel/LastValue.h"
+#include "rrlib/data_fusion/functions.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -58,6 +58,8 @@ namespace rrlib
 {
 namespace data_fusion
 {
+namespace channel
+{
 
 //----------------------------------------------------------------------
 // Forward declarations / typedefs / enums
@@ -66,81 +68,50 @@ namespace data_fusion
 //----------------------------------------------------------------------
 // Class declaration
 //----------------------------------------------------------------------
-//! Short description of tDataFusion
-/*! A more detailed description of tDataFusion, which
+//! Short description of Average
+/*! A more detailed description of Average, which
  *  Tobias Foehst hasn't done yet !!
  */
-template <
-typename TSample,
-template <typename> class TChannel = channel::LastValue
->
-class tDataFusion
+template <typename TSample>
+class Average : public Base<TSample>
 {
-
-//----------------------------------------------------------------------
-// Public methods and typedefs
-//----------------------------------------------------------------------
-public:
-
-  typedef TSample tSample;
-
-  virtual ~tDataFusion() = 0;
-
-  inline size_t NumberOfChannels() const
-  {
-    return this->channels.size();
-  }
-
-  void SetNumberOfChannels(size_t number_of_channels);
-
-  void UpdateChannel(size_t channel, const tSample &sample, double key = 1);
-
-  template <typename TSampleIterator>
-  void UpdateAllChannels(TSampleIterator begin_samples, TSampleIterator end_samples);
-
-  template <typename TSampleIterator, typename TKeyIterator>
-  void UpdateAllChannels(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys);
-
-  inline const tSample &FusedValue()
-  {
-    if (!this->IsValid())
-    {
-      throw std::runtime_error("Fused value not available with invalid state!");
-    }
-    if (this->data_changed)
-    {
-      this->fused_value = this->CalculateFusedValue(this->channels);
-      this->data_changed = false;
-    }
-    return this->fused_value;
-  }
-
-  const bool IsValid() const;
-
-  void ClearChannels();
-
-  void ResetState();
-
-  void EnterNextTimestep();
 
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
 
-  std::vector<TChannel<TSample>> channels;
-  TSample fused_value;
-  bool data_changed;
+  std::vector<TSample> samples;
+  std::vector<double> keys;
 
-  virtual const char *GetLogDescription() const
+  virtual void AddSampleImplementation(const TSample &sample, double key)
   {
-    return "tDataFusion";
+    this->samples.push_back(sample);
+    this->keys.push_back(key);
+    this->SetValid(true);
   }
 
-  virtual const bool HasValidState() const = 0;
-  virtual const TSample CalculateFusedValue(const std::vector<TChannel<TSample>> &channels) = 0;
-  virtual void ResetStateImplementation() = 0;
-  virtual void EnterNextTimestepImplementation() = 0;
+  virtual const TSample GetSampleImplementation() const
+  {
+    return FuseValuesUsingAverage<TSample>(this->samples.begin(), this->samples.end());
+  }
+
+  virtual const double GetKeyImplementation() const
+  {
+    return FuseValuesUsingAverage<TSample>(this->keys.begin(), this->keys.end());
+  }
+
+  virtual void ClearDataImplementation()
+  {
+    this->samples.clear();
+    this->keys.clear();
+    this->SetValid(false);
+  }
+
+  virtual void PrepareForNextTimestepImplementation()
+  {
+    this->ClearDataImplementation();
+  }
 
 };
 
@@ -149,7 +120,6 @@ private:
 //----------------------------------------------------------------------
 }
 }
-
-#include "rrlib/data_fusion/tDataFusion.hpp"
+}
 
 #endif

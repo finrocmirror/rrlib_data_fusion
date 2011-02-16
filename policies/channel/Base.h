@@ -19,33 +19,30 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //----------------------------------------------------------------------
-/*!\file    tDataFusion.h
+/*!\file    Base.h
  *
  * \author  Tobias Foehst
  *
- * \date    2011-01-25
+ * \date    2011-02-14
  *
- * \brief   Contains tDataFusion
+ * \brief   Contains Base
  *
- * \b tDataFusion
+ * \b Base
  *
- * A few words for tDataFusion
+ * A few words for Base
  *
  */
 //----------------------------------------------------------------------
-#ifndef __rrlib__data_fusion__tDataFusion_h__
-#define __rrlib__data_fusion__tDataFusion_h__
+#ifndef __rrlib__data_fusion__policies__channel__Base_h__
+#define __rrlib__data_fusion__policies__channel__Base_h__
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
-#include <stdexcept>
-#include <vector>
 
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
-#include "rrlib/data_fusion/policies/channel/LastValue.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -58,6 +55,8 @@ namespace rrlib
 {
 namespace data_fusion
 {
+namespace channel
+{
 
 //----------------------------------------------------------------------
 // Forward declarations / typedefs / enums
@@ -66,15 +65,12 @@ namespace data_fusion
 //----------------------------------------------------------------------
 // Class declaration
 //----------------------------------------------------------------------
-//! Short description of tDataFusion
-/*! A more detailed description of tDataFusion, which
+//! Short description of Base
+/*! A more detailed description of Base, which
  *  Tobias Foehst hasn't done yet !!
  */
-template <
-typename TSample,
-template <typename> class TChannel = channel::LastValue
->
-class tDataFusion
+template <typename TSample>
+class Base
 {
 
 //----------------------------------------------------------------------
@@ -82,65 +78,71 @@ class tDataFusion
 //----------------------------------------------------------------------
 public:
 
-  typedef TSample tSample;
+  Base()
+      : valid(0)
+  {}
 
-  virtual ~tDataFusion() = 0;
-
-  inline size_t NumberOfChannels() const
+  inline const bool IsValid() const
   {
-    return this->channels.size();
+    return this->valid;
   }
 
-  void SetNumberOfChannels(size_t number_of_channels);
-
-  void UpdateChannel(size_t channel, const tSample &sample, double key = 1);
-
-  template <typename TSampleIterator>
-  void UpdateAllChannels(TSampleIterator begin_samples, TSampleIterator end_samples);
-
-  template <typename TSampleIterator, typename TKeyIterator>
-  void UpdateAllChannels(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys);
-
-  inline const tSample &FusedValue()
+  void AddSample(const TSample &sample, double key)
   {
-    if (!this->IsValid())
-    {
-      throw std::runtime_error("Fused value not available with invalid state!");
-    }
-    if (this->data_changed)
-    {
-      this->fused_value = this->CalculateFusedValue(this->channels);
-      this->data_changed = false;
-    }
-    return this->fused_value;
+    this->AddSampleImplementation(sample, key);
   }
 
-  const bool IsValid() const;
+  const TSample GetSample() const
+  {
+    if (!this->valid)
+    {
+      throw std::runtime_error("Trying to get sample from invalid channel");
+    }
+    return this->GetSampleImplementation();
+  }
 
-  void ClearChannels();
+  const double GetKey() const
+  {
+    if (!this->valid)
+    {
+      throw std::runtime_error("Trying to get key from invalid channel");
+    }
+    return this->GetKeyImplementation();
+  }
 
-  void ResetState();
+  void ClearData()
+  {
+    this->valid = false;
+    this->ClearDataImplementation();
+  }
 
-  void EnterNextTimestep();
+  void PrepareForNextTimestep()
+  {
+    this->PrepareForNextTimestepImplementation();
+  }
+
+//----------------------------------------------------------------------
+// Protected methods
+//----------------------------------------------------------------------
+protected:
+
+  inline void SetValid(bool valid)
+  {
+    this->valid = valid;
+  }
 
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
 
-  std::vector<TChannel<TSample>> channels;
-  TSample fused_value;
-  bool data_changed;
+  bool valid;
 
-  virtual const char *GetLogDescription() const
-  {
-    return "tDataFusion";
-  }
-
-  virtual const bool HasValidState() const = 0;
-  virtual const TSample CalculateFusedValue(const std::vector<TChannel<TSample>> &channels) = 0;
-  virtual void ResetStateImplementation() = 0;
-  virtual void EnterNextTimestepImplementation() = 0;
+  virtual void AddSampleImplementation(const TSample &sample, double key) = 0;
+  virtual const TSample GetSampleImplementation() const = 0;
+  virtual const double GetKeyImplementation() const = 0;
+  virtual void ClearDataImplementation() = 0;
+  virtual void PrepareForNextTimestepImplementation() = 0;
 
 };
 
@@ -149,7 +151,6 @@ private:
 //----------------------------------------------------------------------
 }
 }
-
-#include "rrlib/data_fusion/tDataFusion.hpp"
+}
 
 #endif

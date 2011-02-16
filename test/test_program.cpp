@@ -41,6 +41,7 @@
 //----------------------------------------------------------------------
 #include "rrlib/data_fusion/functions.h"
 #include "rrlib/data_fusion/factory.h"
+#include "rrlib/data_fusion/channels.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -136,10 +137,12 @@ int main(int argc, char **argv)
     assert(IsEqual(result, tPose2D(0.2, 0.2, 0.2)) || IsEqual(result, tPose2D(0.5, 0.5, 0.5)));
   }
 
-  rrlib::data_fusion::InitializeFactory<tPose2D>();
+  InitializeFactory<tPose2D>();
 
   tDataFusion<tPose2D> *fusion = rrlib::data_fusion::tDataFusionFactory<tPose2D>::GetInstance().Create("Average");
   delete fusion;
+
+  tAverage<double, channel::Average> cyclic_fusion;
 
   std::cout << "OK" << std::endl;
 

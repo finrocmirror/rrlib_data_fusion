@@ -73,197 +73,137 @@ namespace data_fusion
 /*! A more detailed description of tWeightedAverageBase, which
  *  Tobias Foehst hasn't done yet !!
  */
-template <typename TSample>
-class tWeightedAverageBase : public tDataFusion<TSample>
+template <
+typename TSample,
+template <typename> class TChannel = channel::LastValue
+>
+class tWeightedAverage : public tDataFusion<TSample, TChannel>
 {
-
-//----------------------------------------------------------------------
-// Public methods
-//----------------------------------------------------------------------
-public:
-
-  tWeightedAverageBase()
-      : accumulated_weights(0)
-  {}
-
-//----------------------------------------------------------------------
-// Protected methods
-//----------------------------------------------------------------------
-protected:
-
-  virtual ~tWeightedAverageBase() = 0;
-
-  inline TSample &AccumulatedSamples()
-  {
-    return this->accumulated_samples;
-  }
-  inline const TSample &AccumulatedSamples() const
-  {
-    return this->accumulated_samples;
-  }
-
-  inline double &AccumulatedWeights()
-  {
-    return this->accumulated_weights;
-  }
-  inline const double &AccumulatedWeights() const
-  {
-    return this->accumulated_weights;
-  }
-
-  virtual const void ClearSamplesImplementation()
-  {
-    this->accumulated_samples = TSample();
-    this->accumulated_weights = 0;
-  }
 
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
-
-  TSample accumulated_samples;
-  double accumulated_weights;
 
   virtual const char *GetLogDescription() const
   {
     return "tWeightedAverage";
   }
 
-  virtual const void ResetStateImplementation()
-  {}
-
-};
-
-template <typename TSample>
-tWeightedAverageBase<TSample>::~tWeightedAverageBase()
-{}
-
-//! Short description of tWeightedAverage
-/*! A more detailed description of tWeightedAverage, which
- *  Tobias Foehst hasn't done yet !!
- */
-template <typename TSample>
-class tWeightedAverage : public tWeightedAverageBase<TSample>
-{
-
-//----------------------------------------------------------------------
-// Private fields and methods
-//----------------------------------------------------------------------
-private:
-
-  virtual const bool AddSampleImplementation(const TSample &sample, double key)
+  virtual const bool HasValidState() const
   {
-    if (key == 0)
-    {
-      return false;
-    }
-
-    this->AccumulatedSamples() += sample * key;
-    this->AccumulatedWeights() += key;
     return true;
   }
 
-  virtual const TSample GetFusedValueImplementation() const
+  virtual const TSample CalculateFusedValue(const std::vector<TChannel<TSample>> &channels)
   {
-    return this->AccumulatedSamples() *(1.0 / this->AccumulatedWeights());
+    char buffer[sizeof(TSample)];
+    memset(buffer, 0, sizeof(buffer));
+    TSample *accumulated = new(buffer) TSample;
+    double accumulated_weights = 0;
+    for (typename std::vector<TChannel<TSample>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+      *accumulated += it->GetSample() * it->GetKey();
+      accumulated_weights += it->GetKey();
+    }
+    return *accumulated *(1.0 / accumulated_weights);
   }
+
+  virtual void ResetStateImplementation()
+  {}
+
+  virtual void EnterNextTimestepImplementation()
+  {}
 
 };
 
 #ifdef _LIB_RRLIB_MATH_PRESENT_
 
-template <>
-class tWeightedAverage<rrlib::math::tPose2D> : public tWeightedAverageBase<rrlib::math::tPose2D>
+template <template <typename> class TChannel>
+class tWeightedAverage<math::tPose2D, TChannel> : public tDataFusion<math::tPose2D, TChannel>
 {
-
-  typedef tWeightedAverageBase<rrlib::math::tPose2D> tBase;
-
-//----------------------------------------------------------------------
-// Public methods
-//----------------------------------------------------------------------
-public:
-  tWeightedAverage()
-      : raw_yaw_value(0)
-  {}
 
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
 
-  double raw_yaw_value;
-
-  virtual const void ClearSamplesImplementation()
+  virtual const char *GetLogDescription() const
   {
-    tBase::ClearSamplesImplementation();
-    this->raw_yaw_value = 0;
+    return "tWeightedAverage<math::tPose2D>";
   }
 
-  virtual const bool AddSampleImplementation(const tBase::tSample &sample, double key)
+  virtual const bool HasValidState() const
   {
-    this->AccumulatedSamples().SetPosition(this->AccumulatedSamples().Position() + sample.Position() * key);
-    this->raw_yaw_value += sample.Yaw() * key;
-    this->AccumulatedWeights() += key;
     return true;
   }
 
-  virtual const tBase::tSample GetFusedValueImplementation() const
+  virtual const math::tPose2D CalculateFusedValue(const std::vector<TChannel<math::tPose2D>> &channels)
   {
-    double factor = 1.0 / this->AccumulatedWeights();
-    return tBase::tSample(this->AccumulatedSamples().Position() * factor, this->raw_yaw_value * factor);
+    math::tVec2d accumulated_position;
+    double accumulated_yaw = 0;
+    double accumulated_weights = 0;
+    for (typename std::vector<TChannel<math::tPose2D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+      accumulated_position += it->GetSample().Position() * it->GetKey();
+      accumulated_yaw += it->GetSample().Yaw() * it->GetKey();
+      accumulated_weights += it->GetKey();
+    }
+    double factor = 1.0 / accumulated_weights;
+    return math::tPose2D(accumulated_position * factor, accumulated_yaw * factor);
   }
+
+  virtual void ResetStateImplementation()
+  {}
+
+  virtual void EnterNextTimestepImplementation()
+  {}
 
 };
 
-template <>
-class tWeightedAverage<rrlib::math::tPose3D> : public tWeightedAverageBase<rrlib::math::tPose3D>
+template <template <typename> class TChannel>
+class tWeightedAverage<math::tPose3D, TChannel> : public tDataFusion<math::tPose3D, TChannel>
 {
-
-  typedef tWeightedAverageBase<rrlib::math::tPose3D> tBase;
-
-//----------------------------------------------------------------------
-// Public methods
-//----------------------------------------------------------------------
-public:
-  tWeightedAverage()
-      : raw_roll_value(0),
-      raw_pitch_value(0),
-      raw_yaw_value(0)
-  {}
 
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
 
-  double raw_roll_value;
-  double raw_pitch_value;
-  double raw_yaw_value;
-
-  virtual const void ClearSamplesImplementation()
+  virtual const char *GetLogDescription() const
   {
-    tBase::ClearSamplesImplementation();
-    this->raw_yaw_value = 0;
-    this->raw_pitch_value = 0;
-    this->raw_yaw_value = 0;
+    return "tWeightedAverage<math::tPose3D>";
   }
 
-  virtual const bool AddSampleImplementation(const tBase::tSample &sample, double key)
+  virtual const bool HasValidState() const
   {
-    this->AccumulatedSamples().SetPosition(this->AccumulatedSamples().Position() + sample.Position() * key);
-    this->raw_roll_value += sample.Roll() * key;
-    this->raw_pitch_value += sample.Pitch() * key;
-    this->raw_yaw_value += sample.Yaw() * key;
-    this->AccumulatedWeights() += key;
     return true;
   }
 
-  virtual const tBase::tSample GetFusedValueImplementation() const
+  virtual const math::tPose3D CalculateFusedValue(const std::vector<TChannel<math::tPose3D>> &channels)
   {
-    double factor = 1.0 / this->AccumulatedWeights();
-    return tBase::tSample(this->AccumulatedSamples().Position() * factor, this->raw_roll_value * factor, this->raw_pitch_value * factor, this->raw_yaw_value * factor);
+    math::tVec3d accumulated_position;
+    double accumulated_roll = 0;
+    double accumulated_pitch = 0;
+    double accumulated_yaw = 0;
+    double accumulated_weights = 0;
+    for (typename std::vector<TChannel<math::tPose3D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+      accumulated_position += it->GetSample().Position() * it->GetKey();
+      accumulated_roll += it->GetSample().Roll() * it->GetKey();
+      accumulated_pitch += it->GetSample().Pitch() * it->GetKey();
+      accumulated_yaw += it->GetSample().Yaw() * it->GetKey();
+      accumulated_weights += it->GetKey();
+    }
+    double factor = 1.0 / accumulated_weights;
+    return math::tPose3D(accumulated_position * factor, accumulated_roll * factor, accumulated_pitch * factor, accumulated_yaw * factor);
   }
+
+  virtual void ResetStateImplementation()
+  {}
+
+  virtual void EnterNextTimestepImplementation()
+  {}
 
 };
 

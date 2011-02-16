@@ -68,79 +68,51 @@ namespace data_fusion
 // Function declaration
 //----------------------------------------------------------------------
 
-namespace
-{
-
-template <typename TFuser, typename TSampleIterator, typename TKeyIterator>
-inline const typename TFuser::tSample FuseValues(TFuser &fuser, TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys)
-{
-  TSampleIterator sample = begin_samples;
-  TKeyIterator key = begin_keys;
-  while (sample != end_samples && key != end_keys)
-  {
-    fuser.AddSample(*sample, *key);
-    ++sample;
-    ++key;
-  }
-
-  if (sample != end_samples || key != end_keys)
-  {
-    throw std::runtime_error("Number of samples did not match number of keys!");
-  }
-
-  return fuser.GetFusedValue();
-}
-
-template <typename TFuser, typename TSampleIterator>
-inline const typename TFuser::tSample FuseValues(TFuser &fuser, TSampleIterator begin_samples, TSampleIterator end_samples)
-{
-  TSampleIterator sample = begin_samples;
-  while (sample != end_samples)
-  {
-    fuser.AddSample(*sample);
-    ++sample;
-  }
-
-  return fuser.GetFusedValue();
-}
-
-}
-
 
 
 template <typename TSample, typename TSampleIterator, typename TKeyIterator>
 inline const TSample FuseValuesUsingMaximumKey(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys)
 {
   tMaximumKey<TSample> fuser;
-  return FuseValues(fuser, begin_samples, end_samples, begin_keys, end_keys);
+  fuser.SetNumberOfChannels(std::distance(begin_samples, end_samples));
+  fuser.UpdateAllChannels(begin_samples, end_samples, begin_keys, end_keys);
+  return fuser.FusedValue();
 }
 
 template <typename TSample, typename TSampleIterator>
 inline const TSample FuseValuesUsingAverage(TSampleIterator begin_samples, TSampleIterator end_samples)
 {
   tAverage<TSample> fuser;
-  return FuseValues(fuser, begin_samples, end_samples);
+  fuser.SetNumberOfChannels(std::distance(begin_samples, end_samples));
+  fuser.UpdateAllChannels(begin_samples, end_samples);
+  return fuser.FusedValue();
 }
 
 template <typename TSample, typename TSampleIterator, typename TKeyIterator>
 inline const TSample FuseValuesUsingWeightedAverage(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys)
 {
   tWeightedAverage<TSample> fuser;
-  return FuseValues(fuser, begin_samples, end_samples, begin_keys, end_keys);
+  fuser.SetNumberOfChannels(std::distance(begin_samples, end_samples));
+  fuser.UpdateAllChannels(begin_samples, end_samples, begin_keys, end_keys);
+  return fuser.FusedValue();
 }
 
 template <typename TSample, typename TSampleIterator>
 inline const TSample FuseValuesUsingMedianVoter(TSampleIterator begin_samples, TSampleIterator end_samples)
 {
   tMedianVoter<TSample> fuser;
-  return FuseValues(fuser, begin_samples, end_samples);
+  fuser.SetNumberOfChannels(std::distance(begin_samples, end_samples));
+  fuser.UpdateAllChannels(begin_samples, end_samples);
+  return fuser.FusedValue();
 }
 
 template <typename TSample, typename TSampleIterator, typename TKeyIterator>
 inline const TSample FuseValuesUsingMedianKeyVoter(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys)
 {
   tMedianKeyVoter<TSample> fuser;
-  return FuseValues(fuser, begin_samples, end_samples, begin_keys, end_keys);
+  fuser.SetNumberOfChannels(std::distance(begin_samples, end_samples));
+  fuser.UpdateAllChannels(begin_samples, end_samples, begin_keys, end_keys);
+  return fuser.FusedValue();
 }
 
 

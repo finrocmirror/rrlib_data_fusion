@@ -4,7 +4,6 @@
   <rrlib name="model_fitting">
     <sources>
       definitions.h
-      factory.h
       functions.h
       tAverage.h
       tDataFusion.h

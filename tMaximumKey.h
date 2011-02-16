@@ -70,54 +70,48 @@ namespace data_fusion
 /*! A more detailed description of tMaximumKey, which
  *  Tobias Foehst hasn't done yet !!
  */
-template <typename TSample>
-class tMaximumKey : public tDataFusion<TSample>
+template <
+typename TSample,
+template <typename> class TChannel = channel::LastValue
+>
+class tMaximumKey : public tDataFusion<TSample, TChannel>
 {
-
-//----------------------------------------------------------------------
-// Public methods
-//----------------------------------------------------------------------
-public:
-
-  tMaximumKey()
-      : current_maximum_key(-std::numeric_limits<double>::max())
-  {}
 
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
 
-  TSample current_result;
-  double current_maximum_key;
-
   virtual const char *GetLogDescription() const
   {
     return "tMaximumKey";
   }
 
-  virtual const void ResetStateImplementation()
-  {}
-
-  virtual const void ClearSamplesImplementation()
+  virtual const bool HasValidState() const
   {
-    this->current_maximum_key = -std::numeric_limits<double>::max();
-  }
-
-  virtual const bool AddSampleImplementation(const TSample &sample, double key)
-  {
-    if (key > this->current_maximum_key)
-    {
-      this->current_maximum_key = key;
-      this->current_result = sample;
-    }
     return true;
   }
 
-  virtual const TSample GetFusedValueImplementation() const
+  virtual const TSample CalculateFusedValue(const std::vector<TChannel<TSample>> &channels)
   {
-    return this->current_result;
+    double maximum_key = -std::numeric_limits<double>::max();
+    TSample result;
+    for (typename std::vector<TChannel<TSample>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+      if (it->GetKey() > maximum_key)
+      {
+        result = it->GetSample();
+        maximum_key = it->GetKey();
+      }
+    }
+    return result;
   }
+
+  virtual void ResetStateImplementation()
+  {}
+
+  virtual void EnterNextTimestepImplementation()
+  {}
 
 };
 
