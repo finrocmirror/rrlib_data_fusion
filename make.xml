@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE targets PUBLIC "-//RRLIB//DTD make 1.0" "http://rrlib.org/xml/1.0/make.dtd">
 <targets>
 
-  <rrlib name="model_fitting">
+  <rrlib name="data_fusion">
     <sources>
       definitions.h
       functions.h
@@ -13,7 +14,7 @@
     </sources>
   </rrlib>
 
-  <rrlib name="model_fitting_factory">
+  <rrlib name="data_fusion_factory">
     <sources>
       factory.h
     </sources>
