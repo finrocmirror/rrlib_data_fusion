@@ -138,6 +138,10 @@ void tDataFusion<TSample, TChannel>::UpdateAllChannels(TSampleIterator begin_sam
 template <typename TSample, template <typename> class TChannel>
 const bool tDataFusion<TSample, TChannel>::IsValid() const
 {
+  if (this->channels.empty())
+  {
+    throw std::logic_error("Number of channels must be greater than zero!");
+  }
   for (typename std::vector<TChannel<TSample>>::const_iterator it = this->channels.begin(); it != this->channels.end(); ++it)
   {
     if (!it->IsValid())
@@ -145,7 +149,7 @@ const bool tDataFusion<TSample, TChannel>::IsValid() const
       return false;
     }
   }
-  return this->channels.size() > 0 && this->HasValidState();
+  return this->HasValidState();
 }
 
 //----------------------------------------------------------------------
