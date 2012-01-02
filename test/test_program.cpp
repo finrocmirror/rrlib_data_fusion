@@ -34,7 +34,7 @@
 #include <cstdlib>
 
 #include "rrlib/math/tPose2D.h"
-#include "rrlib/util/stl_container/join.h"
+#include "rrlib/util/join.h"
 
 //----------------------------------------------------------------------
 // Internal includes with ""
