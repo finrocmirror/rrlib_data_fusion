@@ -94,11 +94,11 @@ template <typename TSample>
 inline void InitializeFactory()
 {
   util::tFunctor<tDataFusion<TSample> *, int> creator(&Create<TSample>);
-  tDataFusionFactory<TSample>::GetInstance().Register("Maximum Key", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 0)));
-  tDataFusionFactory<TSample>::GetInstance().Register("Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 1)));
-  tDataFusionFactory<TSample>::GetInstance().Register("Weighted Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 2)));
-  tDataFusionFactory<TSample>::GetInstance().Register("Median Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 3)));
-  tDataFusionFactory<TSample>::GetInstance().Register("Median Key Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 4)));
+  tDataFusionFactory<TSample>::Instance().Register("Maximum Key", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 0)));
+  tDataFusionFactory<TSample>::Instance().Register("Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 1)));
+  tDataFusionFactory<TSample>::Instance().Register("Weighted Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 2)));
+  tDataFusionFactory<TSample>::Instance().Register("Median Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 3)));
+  tDataFusionFactory<TSample>::Instance().Register("Median Key Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 4)));
 }
 
 //----------------------------------------------------------------------

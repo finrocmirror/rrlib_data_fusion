@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 
   InitializeFactory<tPose2D>();
 
-  tDataFusion<tPose2D> *fusion = rrlib::data_fusion::tDataFusionFactory<tPose2D>::GetInstance().Create("Average");
+  tDataFusion<tPose2D> *fusion = rrlib::data_fusion::tDataFusionFactory<tPose2D>::Instance().Create("Average");
   delete fusion;
 
   tAverage<double, channel::Average> cyclic_fusion;
