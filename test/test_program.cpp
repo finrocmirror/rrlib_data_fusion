@@ -36,6 +36,8 @@
 #include "rrlib/math/tPose2D.h"
 #include "rrlib/util/join.h"
 
+#include "rrlib/logging/configuration.h"
+
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
@@ -71,9 +73,8 @@ int main(int argc, char **argv)
 {
   rrlib::logging::default_log_description = basename(argv[0]);
 
-  rrlib::logging::tLogDomainRegistry::GetInstance()->SetDomainConfiguresSubTree(".", true);
-//  rrlib::logging::tLogDomainRegistry::GetInstance()->SetDomainMaxMessageLevel(".", rrlib::logging::eLL_DEBUG_VERBOSE_3);
-  rrlib::logging::tLogDomainRegistry::GetInstance()->SetDomainPrintsLocation(".", false);
+//  rrlib::logging::SetDomainMaxMessageLevel(".", rrlib::logging::eLL_DEBUG_VERBOSE_3);
+  rrlib::logging::SetDomainPrintsLocation(".", false);
 
   const size_t number_of_samples = 5;
   double keys[number_of_samples] = { 2, 5, 3, 3, 1 };

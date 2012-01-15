@@ -4,7 +4,6 @@
 
   <rrlib name="data_fusion">
     <sources>
-      definitions.h
       functions.h
       tAverage.h
       tDataFusion.h

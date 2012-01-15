@@ -31,11 +31,11 @@
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#include "rrlib/logging/messages.h"
 
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
-#include "rrlib/data_fusion/definitions.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -94,7 +94,7 @@ void tDataFusion<TSample, TChannel>::UpdateChannel(unsigned int channel, const t
     stream << "Channel " << channel << " does not exist in fusion object with " << this->channels.size() << " channel" << (this->channels.size() == 1 ? "" : "s") << "!";
     throw std::runtime_error(stream.str());
   }
-  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_2, "Updating channel ", channel, " with sample ", sample, " and key ", key);
+  RRLIB_LOG_PRINT(logging::eLL_DEBUG_VERBOSE_2, "Updating channel ", channel, " with sample ", sample, " and key ", key);
   this->channels[channel].AddSample(sample, key);
   this->data_changed = true;
 }
@@ -158,7 +158,7 @@ const bool tDataFusion<TSample, TChannel>::IsValid() const
 template <typename TSample, template <typename> class TChannel>
 void tDataFusion<TSample, TChannel>::ClearChannels()
 {
-  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Clearing channels.");
+  RRLIB_LOG_PRINT(logging::eLL_DEBUG_VERBOSE_1, "Clearing channels.");
   for (typename std::vector<TChannel<TSample>>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
   {
     it->Clear();
@@ -171,7 +171,7 @@ void tDataFusion<TSample, TChannel>::ClearChannels()
 template <typename TSample, template <typename> class TChannel>
 void tDataFusion<TSample, TChannel>::ResetState()
 {
-  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Resetting state.");
+  RRLIB_LOG_PRINT(logging::eLL_DEBUG_VERBOSE_1, "Resetting state.");
   this->ClearChannels();
   this->ResetStateImplementation();
 }
@@ -182,7 +182,7 @@ void tDataFusion<TSample, TChannel>::ResetState()
 template <typename TSample, template <typename> class TChannel>
 void tDataFusion<TSample, TChannel>::EnterNextTimestep()
 {
-  RRLIB_LOG_STREAM(logging::eLL_DEBUG_VERBOSE_1, "Clearing channels.");
+  RRLIB_LOG_PRINT(logging::eLL_DEBUG_VERBOSE_1, "Clearing channels.");
   for (typename std::vector<TChannel<TSample>>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
   {
     it->PrepareForNextTimestep();
