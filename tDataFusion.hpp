@@ -67,8 +67,8 @@ namespace data_fusion
 //----------------------------------------------------------------------
 template <
 typename TSample,
-template <typename> class TChannel
->
+         template <typename> class TChannel
+         >
 tDataFusion<TSample, TChannel>::~tDataFusion()
 {}
 

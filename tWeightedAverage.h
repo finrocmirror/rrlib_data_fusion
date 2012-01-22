@@ -75,8 +75,8 @@ namespace data_fusion
  */
 template <
 typename TSample,
-template <typename> class TChannel = channel::LastValue
->
+         template <typename> class TChannel = channel::LastValue
+         >
 class tWeightedAverage : public tDataFusion<TSample, TChannel>
 {
 
@@ -106,7 +106,7 @@ private:
       *accumulated += it->GetSample() * it->GetKey();
       accumulated_weights += it->GetKey();
     }
-    return *accumulated *(1.0 / accumulated_weights);
+    return *accumulated * (1.0 / accumulated_weights);
   }
 
   virtual void ResetStateImplementation()

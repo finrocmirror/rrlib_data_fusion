@@ -75,8 +75,8 @@ namespace data_fusion
  */
 template <
 typename TSample,
-template <typename> class TChannel = channel::LastValue
->
+         template <typename> class TChannel = channel::LastValue
+         >
 class tAverage : public tDataFusion<TSample, TChannel>
 {
 
@@ -104,7 +104,7 @@ private:
     {
       *accumulated += it->GetSample();
     }
-    return *accumulated *(1.0 / channels.size());
+    return *accumulated * (1.0 / channels.size());
   }
 
   virtual void ResetStateImplementation()

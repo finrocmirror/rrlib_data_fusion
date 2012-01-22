@@ -72,8 +72,8 @@ namespace data_fusion
  */
 template <
 typename TSample,
-template <typename> class TChannel = channel::LastValue
->
+         template <typename> class TChannel = channel::LastValue
+         >
 class tMedianKeyVoter : public tDataFusion<TSample, TChannel>
 {
 

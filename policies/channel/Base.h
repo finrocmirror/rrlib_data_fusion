@@ -79,7 +79,7 @@ class Base
 public:
 
   Base()
-      : valid(0)
+    : valid(0)
   {}
 
   inline const bool IsValid() const
