@@ -86,7 +86,7 @@ void tDataFusion<TSample, TChannel>::SetNumberOfChannels(size_t number_of_channe
 // tDataFusion UpdateChannel
 //----------------------------------------------------------------------
 template <typename TSample, template <typename> class TChannel>
-void tDataFusion<TSample, TChannel>::UpdateChannel(unsigned int channel, const tSample &sample, double key)
+void tDataFusion<TSample, TChannel>::UpdateChannel(size_t channel, const tSample &sample, double key)
 {
   if (channel >= this->channels.size())
   {
