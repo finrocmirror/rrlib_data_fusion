@@ -42,6 +42,7 @@
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
 #ifdef _LIB_RRLIB_MATH_PRESENT_
+#include "rrlib/math/tAngle.h"
 #include "rrlib/math/tPose2D.h"
 #include "rrlib/math/tPose3D.h"
 #endif
@@ -118,6 +119,47 @@ private:
 };
 
 #ifdef _LIB_RRLIB_MATH_PRESENT_
+
+template <typename TElement, typename TUnitPolicy, typename TSignedPolicy, template <typename> class TChannel>
+class tWeightedAverage<math::tAngle<TElement, TUnitPolicy, TSignedPolicy>, TChannel> : public tDataFusion<math::tAngle<TElement, TUnitPolicy, TSignedPolicy>, TChannel>
+{
+
+  typedef math::tAngle<TElement, TUnitPolicy, TSignedPolicy> tAngle;
+
+//----------------------------------------------------------------------
+// Private fields and methods
+//----------------------------------------------------------------------
+private:
+
+  virtual const char *GetLogDescription() const
+  {
+    return "tWeightedAverage<math::tAngle<...>>";
+  }
+
+  virtual const bool HasValidState() const
+  {
+    return true;
+  }
+
+  virtual const tAngle CalculateFusedValue(const std::vector<TChannel<tAngle>> &channels)
+  {
+    double accumulated_value = 0;
+    double accumulated_weights = 0;
+    for (typename std::vector<TChannel<tAngle>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+      accumulated_value += static_cast<double>(it->GetSample()) * it->GetKey();
+      accumulated_weights += it->GetKey();
+    }
+    return tAngle(accumulated_value / accumulated_weights);
+  }
+
+  virtual void ResetStateImplementation()
+  {}
+
+  virtual void EnterNextTimestepImplementation()
+  {}
+
+};
 
 template <template <typename> class TChannel>
 class tWeightedAverage<math::tPose2D, TChannel> : public tDataFusion<math::tPose2D, TChannel>
