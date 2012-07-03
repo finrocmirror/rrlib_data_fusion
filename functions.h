@@ -45,6 +45,7 @@
 #include "rrlib/data_fusion/tMaximumKey.h"
 #include "rrlib/data_fusion/tAverage.h"
 #include "rrlib/data_fusion/tWeightedAverage.h"
+#include "rrlib/data_fusion/tWeightedSum.h"
 #include "rrlib/data_fusion/tMedianVoter.h"
 #include "rrlib/data_fusion/tMedianKeyVoter.h"
 
@@ -101,6 +102,19 @@ template <typename TSample, typename TSampleIterator, typename TKeyIterator>
 inline const TSample FuseValuesUsingWeightedAverage(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys)
 {
   tWeightedAverage<TSample> fuser;
+  if (begin_samples == end_samples)
+  {
+    throw std::logic_error("Given empty list of samples!");
+  }
+  fuser.SetNumberOfChannels(std::distance(begin_samples, end_samples));
+  fuser.UpdateAllChannels(begin_samples, end_samples, begin_keys, end_keys);
+  return fuser.FusedValue();
+}
+
+template <typename TSample, typename TSampleIterator, typename TKeyIterator>
+inline const TSample FuseValuesUsingWeightedSum(TSampleIterator begin_samples, TSampleIterator end_samples, TKeyIterator begin_keys, TKeyIterator end_keys)
+{
+  tWeightedSum<TSample> fuser;
   if (begin_samples == end_samples)
   {
     throw std::logic_error("Given empty list of samples!");

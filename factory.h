@@ -46,6 +46,7 @@
 #include "rrlib/data_fusion/tMaximumKey.h"
 #include "rrlib/data_fusion/tAverage.h"
 #include "rrlib/data_fusion/tWeightedAverage.h"
+#include "rrlib/data_fusion/tWeightedSum.h"
 #include "rrlib/data_fusion/tMedianVoter.h"
 #include "rrlib/data_fusion/tMedianKeyVoter.h"
 
@@ -82,8 +83,10 @@ tDataFusion<TSample> *Create(int type)
   case 2:
     return new tWeightedAverage<TSample>;
   case 3:
-    return new tMedianVoter<TSample>;
+    return new tWeightedSum<TSample>;
   case 4:
+    return new tMedianVoter<TSample>;
+  case 5:
     return new tMedianKeyVoter<TSample>;
   default:
     return NULL;
@@ -97,8 +100,9 @@ inline void InitializeFactory()
   tDataFusionFactory<TSample>::Instance().Register("Maximum Key", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 0)));
   tDataFusionFactory<TSample>::Instance().Register("Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 1)));
   tDataFusionFactory<TSample>::Instance().Register("Weighted Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 2)));
-  tDataFusionFactory<TSample>::Instance().Register("Median Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 3)));
-  tDataFusionFactory<TSample>::Instance().Register("Median Key Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 4)));
+  tDataFusionFactory<TSample>::Instance().Register("Weighted Sum", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 3)));
+  tDataFusionFactory<TSample>::Instance().Register("Median Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 4)));
+  tDataFusionFactory<TSample>::Instance().Register("Median Key Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 5)));
 }
 
 //----------------------------------------------------------------------
