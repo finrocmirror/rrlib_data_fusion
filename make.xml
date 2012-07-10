@@ -4,12 +4,16 @@
 
   <rrlib name="data_fusion">
     <sources>
+      policies/**
+      channels.h
       functions.h
       tAverage.h
       tDataFusion.h
       tMaximumKey.h
       tMedianVoter.h
+      tMedianKeyVoter.h
       tWeightedAverage.h
+      tWeightedSum.h
     </sources>
   </rrlib>
 
