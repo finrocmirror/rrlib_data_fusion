@@ -37,8 +37,8 @@
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
-#include "rrlib/util/patterns/singleton.h"
-#include "rrlib/util/patterns/factory.h"
+#include "rrlib/design_patterns/singleton.h"
+#include "rrlib/design_patterns/factory.h"
 
 //----------------------------------------------------------------------
 // Internal includes with ""
@@ -65,7 +65,7 @@ namespace data_fusion
 
 // FIXME: we need template typedefs. Then this can be replaced for simplicity
 template <typename TSample>
-class tDataFusionFactory : public util::tSingletonHolder<util::tFactory<tDataFusion<TSample>, std::string>>
+class tDataFusionFactory : public design_patterns::tSingletonHolder<design_patterns::tFactory<tDataFusion<TSample>, std::string>>
 {
   tDataFusionFactory();
 };
@@ -96,13 +96,13 @@ tDataFusion<TSample> *Create(int type)
 template <typename TSample>
 inline void InitializeFactory()
 {
-  util::tFunctor<tDataFusion<TSample> *, int> creator(&Create<TSample>);
-  tDataFusionFactory<TSample>::Instance().Register("Maximum Key", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 0)));
-  tDataFusionFactory<TSample>::Instance().Register("Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 1)));
-  tDataFusionFactory<TSample>::Instance().Register("Weighted Average", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 2)));
-  tDataFusionFactory<TSample>::Instance().Register("Weighted Sum", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 3)));
-  tDataFusionFactory<TSample>::Instance().Register("Median Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 4)));
-  tDataFusionFactory<TSample>::Instance().Register("Median Key Voter", util::tFunctor<tDataFusion<TSample> *>(util::BindFirstParameter(creator, 5)));
+  design_patterns::tFunctor<tDataFusion<TSample> *, int> creator(&Create<TSample>);
+  tDataFusionFactory<TSample>::Instance().Register("Maximum Key", design_patterns::tFunctor<tDataFusion<TSample> *>(design_patterns::BindFirstParameter(creator, 0)));
+  tDataFusionFactory<TSample>::Instance().Register("Average", design_patterns::tFunctor<tDataFusion<TSample> *>(design_patterns::BindFirstParameter(creator, 1)));
+  tDataFusionFactory<TSample>::Instance().Register("Weighted Average", design_patterns::tFunctor<tDataFusion<TSample> *>(design_patterns::BindFirstParameter(creator, 2)));
+  tDataFusionFactory<TSample>::Instance().Register("Weighted Sum", design_patterns::tFunctor<tDataFusion<TSample> *>(design_patterns::BindFirstParameter(creator, 3)));
+  tDataFusionFactory<TSample>::Instance().Register("Median Voter", design_patterns::tFunctor<tDataFusion<TSample> *>(design_patterns::BindFirstParameter(creator, 4)));
+  tDataFusionFactory<TSample>::Instance().Register("Median Key Voter", design_patterns::tFunctor<tDataFusion<TSample> *>(design_patterns::BindFirstParameter(creator, 5)));
 }
 
 //----------------------------------------------------------------------
