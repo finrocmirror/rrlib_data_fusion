@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 {
   rrlib::logging::default_log_description = basename(argv[0]);
 
-//  rrlib::logging::SetDomainMaxMessageLevel(".", rrlib::logging::eLL_DEBUG_VERBOSE_3);
+//  rrlib::logging::SetDomainMaxMessageLevel(".", DEBUG_VERBOSE_3);
   rrlib::logging::SetDomainPrintsLocation(".", false);
 
   const size_t number_of_samples = 5;
