@@ -106,11 +106,17 @@ private:
     {
       max_weight = std::max(max_weight, it->GetKey());
     }
-    for (typename std::vector<TChannel<TSample>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+
+    if (max_weight != 0.0)
     {
-      double weight = it->GetKey() / max_weight;
-      *accumulated += it->GetSample() * weight;
+
+      for (typename std::vector<TChannel<TSample>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+      {
+        double weight = it->GetKey() / max_weight;
+        *accumulated += it->GetSample() * weight;
+      }
     }
+
     return *accumulated;
   }
 
@@ -153,11 +159,16 @@ private:
     {
       max_weight = std::max(max_weight, it->GetKey());
     }
-    for (typename std::vector<TChannel<tAngle>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+
+    if (max_weight != 0.0)
     {
-      double weight = it->GetKey() / max_weight;
-      accumulated_value += static_cast<double>(it->GetSample()) * weight;
+      for (typename std::vector<TChannel<tAngle>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+      {
+        double weight = it->GetKey() / max_weight;
+        accumulated_value += static_cast<double>(it->GetSample()) * weight;
+      }
     }
+
     return tAngle(accumulated_value);
   }
 
@@ -197,12 +208,17 @@ private:
     {
       max_weight = std::max(max_weight, it->GetKey());
     }
-    for (typename std::vector<TChannel<math::tPose2D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+
+    if (max_weight != 0.0)
     {
-      double weight = it->GetKey() / max_weight;
-      accumulated_position += it->GetSample().Position() * weight;
-      accumulated_yaw += it->GetSample().Yaw() * weight;
+      for (typename std::vector<TChannel<math::tPose2D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+      {
+        double weight = it->GetKey() / max_weight;
+        accumulated_position += it->GetSample().Position() * weight;
+        accumulated_yaw += it->GetSample().Yaw() * weight;
+      }
     }
+
     return math::tPose2D(accumulated_position, accumulated_yaw);
   }
 
@@ -244,14 +260,19 @@ private:
     {
       max_weight = std::max(max_weight, it->GetKey());
     }
-    for (typename std::vector<TChannel<math::tPose3D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+
+    if (max_weight != 0.0)
     {
-      double weight = it->GetKey() / max_weight;
-      accumulated_position += it->GetSample().Position() * weight;
-      accumulated_roll += it->GetSample().Roll() * weight;
-      accumulated_pitch += it->GetSample().Pitch() * weight;
-      accumulated_yaw += it->GetSample().Yaw() * weight;
+      for (typename std::vector<TChannel<math::tPose3D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+      {
+        double weight = it->GetKey() / max_weight;
+        accumulated_position += it->GetSample().Position() * weight;
+        accumulated_roll += it->GetSample().Roll() * weight;
+        accumulated_pitch += it->GetSample().Pitch() * weight;
+        accumulated_yaw += it->GetSample().Yaw() * weight;
+      }
     }
+
     return math::tPose3D(accumulated_position, accumulated_roll, accumulated_pitch, accumulated_yaw);
   }
 

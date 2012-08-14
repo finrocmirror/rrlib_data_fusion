@@ -102,10 +102,27 @@ private:
     memset(buffer, 0, sizeof(buffer));
     TSample *accumulated = new(buffer) TSample;
     double accumulated_weights = 0;
-    for (typename std::vector<TChannel<TSample>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+
+    std::function<double(const TChannel<TSample> &)> weight_function = [](const TChannel<TSample> &channel)
     {
-      *accumulated += it->GetSample() * it->GetKey();
-      accumulated_weights += it->GetKey();
+      return 1.0;
+    };
+    for (auto it = channels.begin(); it != channels.end(); ++it)
+    {
+      if (it->GetKey() != 0.0)
+      {
+        weight_function = [](const TChannel<TSample> &channel)
+        {
+          return channel.GetKey();
+        };
+        break;
+      }
+    }
+
+    for (auto it = channels.begin(); it != channels.end(); ++it)
+    {
+      *accumulated += it->GetSample() * weight_function(*it);
+      accumulated_weights += weight_function(*it);
     }
     return *accumulated * (1.0 / accumulated_weights);
   }
@@ -145,10 +162,27 @@ private:
   {
     double accumulated_value = 0;
     double accumulated_weights = 0;
+
+    std::function<double(const TChannel<tAngle> &)> weight_function = [](const TChannel<tAngle> &channel)
+    {
+      return 1.0;
+    };
+    for (auto it = channels.begin(); it != channels.end(); ++it)
+    {
+      if (it->GetKey() != 0.0)
+      {
+        weight_function = [](const TChannel<tAngle> &channel)
+        {
+          return channel.GetKey();
+        };
+        break;
+      }
+    }
+
     for (typename std::vector<TChannel<tAngle>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
     {
-      accumulated_value += static_cast<double>(it->GetSample()) * it->GetKey();
-      accumulated_weights += it->GetKey();
+      accumulated_value += static_cast<double>(it->GetSample()) * weight_function(*it);
+      accumulated_weights += weight_function(*it);
     }
     return tAngle(accumulated_value / accumulated_weights);
   }
@@ -185,11 +219,28 @@ private:
     math::tVec2d accumulated_position;
     double accumulated_yaw = 0;
     double accumulated_weights = 0;
+
+    std::function<double(const TChannel<math::tPose2D> &)> weight_function = [](const TChannel<math::tPose2D> &channel)
+    {
+      return 1.0;
+    };
+    for (auto it = channels.begin(); it != channels.end(); ++it)
+    {
+      if (it->GetKey() != 0.0)
+      {
+        weight_function = [](const TChannel<math::tPose2D> &channel)
+        {
+          return channel.GetKey();
+        };
+        break;
+      }
+    }
+
     for (typename std::vector<TChannel<math::tPose2D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
     {
-      accumulated_position += it->GetSample().Position() * it->GetKey();
-      accumulated_yaw += it->GetSample().Yaw() * it->GetKey();
-      accumulated_weights += it->GetKey();
+      accumulated_position += it->GetSample().Position() * weight_function(*it);
+      accumulated_yaw += it->GetSample().Yaw() * weight_function(*it);
+      accumulated_weights += weight_function(*it);
     }
     double factor = 1.0 / accumulated_weights;
     return math::tPose2D(accumulated_position * factor, accumulated_yaw * factor);
@@ -229,13 +280,30 @@ private:
     double accumulated_pitch = 0;
     double accumulated_yaw = 0;
     double accumulated_weights = 0;
+
+    std::function<double(const TChannel<math::tPose3D> &)> weight_function = [](const TChannel<math::tPose3D> &channel)
+    {
+      return 1.0;
+    };
+    for (auto it = channels.begin(); it != channels.end(); ++it)
+    {
+      if (it->GetKey() != 0.0)
+      {
+        weight_function = [](const TChannel<math::tPose3D> &channel)
+        {
+          return channel.GetKey();
+        };
+        break;
+      }
+    }
+
     for (typename std::vector<TChannel<math::tPose3D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
     {
-      accumulated_position += it->GetSample().Position() * it->GetKey();
-      accumulated_roll += it->GetSample().Roll() * it->GetKey();
-      accumulated_pitch += it->GetSample().Pitch() * it->GetKey();
-      accumulated_yaw += it->GetSample().Yaw() * it->GetKey();
-      accumulated_weights += it->GetKey();
+      accumulated_position += it->GetSample().Position() * weight_function(*it);
+      accumulated_roll += it->GetSample().Roll() * weight_function(*it);
+      accumulated_pitch += it->GetSample().Pitch() * weight_function(*it);
+      accumulated_yaw += it->GetSample().Yaw() * weight_function(*it);
+      accumulated_weights += weight_function(*it);
     }
     double factor = 1.0 / accumulated_weights;
     return math::tPose3D(accumulated_position * factor, accumulated_roll * factor, accumulated_pitch * factor, accumulated_yaw * factor);
