@@ -94,15 +94,17 @@ private:
 
   virtual const TSample CalculateFusedValue(const std::vector<TChannel<TSample>> &channels)
   {
-    double maximum_key = -std::numeric_limits<double>::max();
-    TSample result;
-    for (typename std::vector<TChannel<TSample>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    auto channel = channels.begin();
+    TSample result = channel->GetSample();
+    double maximum_key = channel->GetKey();
+    while (channel != channels.end())
     {
-      if (it->GetKey() > maximum_key)
+      if (channel->GetKey() > maximum_key)
       {
-        result = it->GetSample();
-        maximum_key = it->GetKey();
+        result = channel->GetSample();
+        maximum_key = channel->GetKey();
       }
+      ++channel;
     }
     return result;
   }
