@@ -39,6 +39,7 @@
 //----------------------------------------------------------------------
 #include "rrlib/design_patterns/singleton.h"
 #include "rrlib/design_patterns/factory.h"
+#include "rrlib/design_patterns/command.h"
 
 //----------------------------------------------------------------------
 // Internal includes with ""
