@@ -2,7 +2,7 @@
 <!DOCTYPE targets PUBLIC "-//RRLIB//DTD make 1.0" "http://rrlib.org/xml/1.0/make.dtd">
 <targets>
 
-  <rrlib name="data_fusion">
+  <rrlib>
     <sources>
       policies/**
       channels.h
@@ -17,7 +17,7 @@
     </sources>
   </rrlib>
 
-  <rrlib name="data_fusion_factory">
+  <rrlib name="factory">
     <sources>
       factory.h
     </sources>
