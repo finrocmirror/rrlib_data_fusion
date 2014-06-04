@@ -179,7 +179,7 @@ private:
   virtual const math::tPose2D CalculateFusedValue(const std::vector<TChannel<math::tPose2D>> &channels)
   {
     math::tVec2d accumulated_position;
-    double accumulated_yaw = 0;
+    math::tAngle<double, math::angle::Radian, math::angle::NoWrap> accumulated_yaw;
     for (typename std::vector<TChannel<math::tPose2D>>::const_iterator it = channels.begin(); it != channels.end(); ++it)
     {
       accumulated_position += it->GetSample().Position();
