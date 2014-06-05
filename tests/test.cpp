@@ -73,9 +73,9 @@ const double keys[cNUMBER_OF_SAMPLES] = { 2, 5, 3, 3, 1 };
 //----------------------------------------------------------------------
 // Implementation
 //----------------------------------------------------------------------
-class tTest : public util::tUnitTestSuite
+class Test : public util::tUnitTestSuite
 {
-  RRLIB_UNIT_TESTS_BEGIN_SUITE(tTest);
+  RRLIB_UNIT_TESTS_BEGIN_SUITE(Test);
   RRLIB_UNIT_TESTS_ADD_TEST(Double);
   RRLIB_UNIT_TESTS_ADD_TEST(Pose);
   RRLIB_UNIT_TESTS_ADD_TEST(Factory);
@@ -83,12 +83,6 @@ class tTest : public util::tUnitTestSuite
   RRLIB_UNIT_TESTS_END_SUITE;
 
 private:
-
-  virtual void InitializeTests()
-  {}
-
-  virtual void CleanUp()
-  {}
 
   void Double()
   {
@@ -135,7 +129,7 @@ private:
   }
 };
 
-RRLIB_UNIT_TESTS_REGISTER_SUITE(tTest);
+RRLIB_UNIT_TESTS_REGISTER_SUITE(Test);
 
 //----------------------------------------------------------------------
 // End of namespace declaration
