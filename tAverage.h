@@ -186,7 +186,7 @@ private:
       accumulated_yaw += it->GetSample().Yaw();
     }
     double factor = 1.0 / channels.size();
-    return math::tPose2D(accumulated_position * factor, accumulated_yaw * factor);
+    return math::tPose2D(accumulated_position * factor, math::tAngleRad(accumulated_yaw * factor));
   }
 
   virtual void ResetStateImplementation()
@@ -230,7 +230,7 @@ private:
       accumulated_yaw += it->GetSample().Yaw();
     }
     double factor = 1.0 / channels.size();
-    return math::tPose3D(accumulated_position * factor, accumulated_roll * factor, accumulated_pitch * factor, accumulated_yaw * factor);
+    return math::tPose3D(accumulated_position * factor, math::tAngleRad(accumulated_roll * factor), math::tAngleRad(accumulated_pitch * factor), math::tAngleRad(accumulated_yaw * factor));
   }
 
   virtual void ResetStateImplementation()

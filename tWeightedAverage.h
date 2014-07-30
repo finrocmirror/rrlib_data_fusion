@@ -243,7 +243,7 @@ private:
       accumulated_weights += weight_function(*it);
     }
     double factor = 1.0 / accumulated_weights;
-    return math::tPose2D(accumulated_position * factor, accumulated_yaw * factor);
+    return math::tPose2D(accumulated_position * factor, math::tAngleRad(accumulated_yaw * factor));
   }
 
   virtual void ResetStateImplementation()
@@ -306,7 +306,7 @@ private:
       accumulated_weights += weight_function(*it);
     }
     double factor = 1.0 / accumulated_weights;
-    return math::tPose3D(accumulated_position * factor, accumulated_roll * factor, accumulated_pitch * factor, accumulated_yaw * factor);
+    return math::tPose3D(accumulated_position * factor, math::tAngleRad(accumulated_roll * factor), math::tAngleRad(accumulated_pitch * factor), math::tAngleRad(accumulated_yaw * factor));
   }
 
   virtual void ResetStateImplementation()

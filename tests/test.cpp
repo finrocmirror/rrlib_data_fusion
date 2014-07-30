@@ -98,21 +98,21 @@ private:
   void Pose()
   {
     std::vector<math::tPose2D> data;
-    data.push_back(math::tPose2D(0.4, 0.4, 0.4));
-    data.push_back(math::tPose2D(0.1, 0.1, 0.1));
-    data.push_back(math::tPose2D(0.2, 0.2, 0.2));
-    data.push_back(math::tPose2D(0.5, 0.5, 0.5));
-    data.push_back(math::tPose2D(0.8, 0.8, 0.8));
+    data.push_back(math::tPose2D(0.4, 0.4, math::tAngleRad(0.4)));
+    data.push_back(math::tPose2D(0.1, 0.1, math::tAngleRad(0.1)));
+    data.push_back(math::tPose2D(0.2, 0.2, math::tAngleRad(0.2)));
+    data.push_back(math::tPose2D(0.5, 0.5, math::tAngleRad(0.5)));
+    data.push_back(math::tPose2D(0.8, 0.8, math::tAngleRad(0.8)));
     assert(data.size() == cNUMBER_OF_SAMPLES);
 
-    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.1, 0.1, 0.1), FuseValuesUsingMaximumKey<math::tPose2D>(data.begin(), data.end(), keys, keys + cNUMBER_OF_SAMPLES)));
+    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.1, 0.1, math::tAngleRad(0.1)), FuseValuesUsingMaximumKey<math::tPose2D>(data.begin(), data.end(), keys, keys + cNUMBER_OF_SAMPLES)));
 
-    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.4, 0.4, 0.4), FuseValuesUsingAverage<math::tPose2D>(data.begin(), data.end())));
-    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.3, 0.3, 0.3), FuseValuesUsingWeightedAverage<math::tPose2D>(data.begin(), data.end(), keys, keys + cNUMBER_OF_SAMPLES)));
-    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.4, 0.4, 0.4), FuseValuesUsingMedianVoter<math::tPose2D>(data.begin(), data.end())));
+    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.4, 0.4, math::tAngleRad(0.4)), FuseValuesUsingAverage<math::tPose2D>(data.begin(), data.end())));
+    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.3, 0.3, math::tAngleRad(0.3)), FuseValuesUsingWeightedAverage<math::tPose2D>(data.begin(), data.end(), keys, keys + cNUMBER_OF_SAMPLES)));
+    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.4, 0.4, math::tAngleRad(0.4)), FuseValuesUsingMedianVoter<math::tPose2D>(data.begin(), data.end())));
 
     math::tPose2D result = FuseValuesUsingMedianKeyVoter<math::tPose2D>(data.begin(), data.end(), keys, keys + cNUMBER_OF_SAMPLES);
-    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.2, 0.2, 0.2), result) || IsEqual(math::tPose2D(0.5, 0.5, 0.5), result));
+    RRLIB_UNIT_TESTS_ASSERT(IsEqual(math::tPose2D(0.2, 0.2, math::tAngleRad(0.2)), result) || IsEqual(math::tPose2D(0.5, 0.5, math::tAngleRad(0.5)), result));
   }
 
   void Factory()

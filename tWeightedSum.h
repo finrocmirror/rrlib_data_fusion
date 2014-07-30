@@ -219,7 +219,7 @@ private:
       }
     }
 
-    return math::tPose2D(accumulated_position, accumulated_yaw);
+    return math::tPose2D(accumulated_position, math::tAngleRad(accumulated_yaw));
   }
 
   virtual void ResetStateImplementation()
@@ -273,7 +273,7 @@ private:
       }
     }
 
-    return math::tPose3D(accumulated_position, accumulated_roll, accumulated_pitch, accumulated_yaw);
+    return math::tPose3D(accumulated_position, math::tAngleRad(accumulated_roll), math::tAngleRad(accumulated_pitch), math::tAngleRad(accumulated_yaw));
   }
 
   virtual void ResetStateImplementation()
