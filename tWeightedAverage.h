@@ -276,9 +276,9 @@ private:
   virtual const math::tPose3D CalculateFusedValue(const std::vector<TChannel<math::tPose3D>> &channels)
   {
     math::tVec3d accumulated_position;
-    double accumulated_roll = 0;
-    double accumulated_pitch = 0;
-    double accumulated_yaw = 0;
+    math::tAngle<double, math::angle::Radian, math::angle::NoWrap> accumulated_roll;
+    math::tAngle<double, math::angle::Radian, math::angle::NoWrap> accumulated_pitch;
+    math::tAngle<double, math::angle::Radian, math::angle::NoWrap> accumulated_yaw;
     double accumulated_weights = 0;
 
     std::function<double(const TChannel<math::tPose3D> &)> weight_function = [](const TChannel<math::tPose3D> &channel)
